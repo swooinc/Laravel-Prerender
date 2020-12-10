@@ -1,6 +1,4 @@
-#### For Laravel 4, use the [1.0 branch](https://github.com/JeroenNoten/Laravel-Prerender/tree/1.0)
-
-Laravel Prerender [![Build Status](https://travis-ci.org/JeroenNoten/Laravel-Prerender.svg?branch=master)](https://travis-ci.org/JeroenNoten/Laravel-Prerender)
+Laravel Prerender
 =========================== 
 
 Google, Facebook, Twitter, Yahoo, and Bing are constantly trying to view your website... but they don't execute javascript. That's why Prerender was built. Prerender is perfect for AngularJS SEO, BackboneJS SEO, EmberJS SEO, and any other javascript framework.

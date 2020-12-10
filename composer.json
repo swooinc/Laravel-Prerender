@@ -1,5 +1,5 @@
 {
-    "name": "nutsweb/laravel-prerender",
+    "name": "swooinc/laravel-prerender",
     "description": "Laravel middleware for prerendering javascript-rendered pages on the fly for SEO",
     "keywords": ["laravel", "prerender"],
     "license": "MIT",
@@ -7,11 +7,15 @@
         {
             "name": "Jeroen Noten",
             "email": "jeroennoten@me.com"
+        },
+        {
+            "name": "Chin Leung",
+            "email": "chin@swoo.ca"
         }
     ],
     "require": {
-        "php": ">=5.5.9",
-        "illuminate/support": "~5.0.14|~5.1",
+        "php": ">=7.4",
+        "illuminate/support": "^8.0",
         "guzzlehttp/guzzle": "^6.0",
         "symfony/psr-http-message-bridge": "^1.0"
     },

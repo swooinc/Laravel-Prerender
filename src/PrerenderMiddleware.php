@@ -3,13 +3,13 @@
 
 namespace Nutsweb\LaravelPrerender;
 
-
 use Closure;
-use Redirect;
+use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Contracts\Foundation\Application;
-use GuzzleHttp\Client as Guzzle;
+use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
+use Redirect;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -117,7 +117,7 @@ class PrerenderMiddleware
             if ($prerenderedResponse) {
                 $statusCode = $prerenderedResponse->getStatusCode();
 
-                if (!$this->returnSoftHttpCodes && $statusCode >= 300 && $statusCode < 400) {
+                if (! $this->returnSoftHttpCodes && $statusCode >= 300 && $statusCode < 400) {
                     $headers = $prerenderedResponse->getHeaders();
                     return Redirect::to(array_change_key_case($headers, CASE_LOWER)["location"][0], $statusCode);
                 }
@@ -144,26 +144,36 @@ class PrerenderMiddleware
 
         $isRequestingPrerenderedPage = false;
 
-        if (!$userAgent) return false;
-        if (!$request->isMethod('GET')) return false;
+        if (! $userAgent) {
+            return false;
+        }
+        if (! $request->isMethod('GET')) {
+            return false;
+        }
 
         // prerender if _escaped_fragment_ is in the query string
-        if ($request->query->has('_escaped_fragment_')) $isRequestingPrerenderedPage = true;
+        if ($request->query->has('_escaped_fragment_')) {
+            $isRequestingPrerenderedPage = true;
+        }
 
         // prerender if a crawler is detected
         foreach ($this->crawlerUserAgents as $crawlerUserAgent) {
-            if (str_contains($userAgent, strtolower($crawlerUserAgent))) {
+            if (Str::contains($userAgent, strtolower($crawlerUserAgent))) {
                 $isRequestingPrerenderedPage = true;
             }
         }
 
-        if ($bufferAgent) $isRequestingPrerenderedPage = true;
+        if ($bufferAgent) {
+            $isRequestingPrerenderedPage = true;
+        }
 
-        if (!$isRequestingPrerenderedPage) return false;
+        if (! $isRequestingPrerenderedPage) {
+            return false;
+        }
 
         // only check whitelist if it is not empty
         if ($this->whitelist) {
-            if (!$this->isListed($requestUri, $this->whitelist)) {
+            if (! $this->isListed($requestUri, $this->whitelist)) {
                 return false;
             }
         }
@@ -172,7 +182,9 @@ class PrerenderMiddleware
         if ($this->blacklist) {
             $uris[] = $requestUri;
             // we also check for a blacklisted referer
-            if ($referer) $uris[] = $referer;
+            if ($referer) {
+                $uris[] = $referer;
+            }
             if ($this->isListed($uris, $this->blacklist)) {
                 return false;
             }
@@ -196,20 +208,20 @@ class PrerenderMiddleware
         if ($this->prerenderToken) {
             $headers['X-Prerender-Token'] = $this->prerenderToken;
         }
-    
+
         $protocol = $request->isSecure() ? 'https' : 'http';
-    
+
         try {
             // Return the Guzzle Response
-        $host = $request->getHost();
+            $host = $request->getHost();
             $path = $request->Path();
             // Fix "//" 404 error
             if ($path == "/") {
                 $path = "";
             }
-            return $this->client->get($this->prerenderUri . '/' . urlencode($protocol.'://'.$host.'/'.$path), compact('headers'));
+            return $this->client->get($this->prerenderUri.'/'.urlencode($protocol.'://'.$host.'/'.$path), compact('headers'));
         } catch (RequestException $exception) {
-            if(!$this->returnSoftHttpCodes && !empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() == 404) {
+            if (! $this->returnSoftHttpCodes && ! empty($exception->getResponse()) && $exception->getResponse()->getStatusCode() == 404) {
                 \App::abort(404);
             }
             // In case of an exception, we only throw the exception if we are in debug mode. Otherwise,
@@ -246,12 +258,11 @@ class PrerenderMiddleware
 
         foreach ($list as $pattern) {
             foreach ($needles as $needle) {
-                if (str_is($pattern, $needle)) {
+                if (Str::is($pattern, $needle)) {
                     return true;
                 }
             }
         }
         return false;
     }
-
 }
