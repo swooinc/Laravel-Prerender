@@ -21,5 +21,12 @@
         "psr-4": {
             "Nutsweb\\LaravelPrerender\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nutsweb\\LaravelPrerender\\LaravelPrerenderServiceProvider"
+            ]
+        }
     }
 }
