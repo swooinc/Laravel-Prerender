@@ -148,6 +148,7 @@
 
     'crawler_user_agents' => [
         'googlebot',
+        'google-inspectiontool',
         'yahoo',
         'bingbot',
         'yandex',
